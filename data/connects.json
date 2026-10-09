@@ -1,0 +1,292 @@
+{
+  "locations": [
+    {
+      "name": "Melrose Park",
+      "suburb": "Melrose Park",
+      "state": "NSW",
+      "postcode": 2114,
+      "demographic": ["Young Families", "Adults"],
+      "schedule": ["Thursday", "19:00:00"]
+    },
+    {
+      "name": "Parramatta",
+      "suburb": "Parramatta",
+      "state": "NSW",
+      "postcode": 2150,
+      "demographic": ["Young Families", "Adults"],
+      "schedule": ["Thursday", "19:00:00"]
+    },
+    {
+      "name": "Cherrybrook",
+      "suburb": "Cherrybrook",
+      "state": "NSW",
+      "postcode": 2126,
+      "demographic": ["Young Families", "Adults"],
+      "schedule": ["Saturday", "14:00:00"]
+    },
+    {
+      "name": "Youth Parents Newington",
+      "suburb": "Newington",
+      "state": "NSW",
+      "postcode": 2127,
+      "demographic": ["Young Families", "Adults", "Youth Parents"],
+      "schedule": ["Friday", "19:00:00"]
+    },
+    {
+      "name": "Wentworth Point",
+      "suburb": "Wentworth Point",
+      "state": "NSW",
+      "postcode": 2127,
+      "demographic": ["Young Adults"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Roselands",
+      "suburb": "Narwee",
+      "state": "NSW",
+      "postcode": 2209,
+      "demographic": ["Young Families", "Adults"],
+      "schedule": ["Wednesday", "19:00:00"]
+    },
+    {
+      "name": "St. Clair Young Adults",
+      "suburb": "St. Clair",
+      "state": "NSW",
+      "postcode": 2759,
+      "demographic": ["Young Adults"],
+      "schedule": ["Thursday", "18:30:00"]
+    },
+    {
+      "name": "Ryde",
+      "suburb": "Ryde",
+      "state": "NSW",
+      "postcode": 2112,
+      "demographic": ["Young Families"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Green Square",
+      "suburb": "Zetland",
+      "state": "NSW",
+      "postcode": 2017,
+      "demographic": ["Young Adults", "Women"],
+      "schedule": ["Saturday", "??:00:00"]
+    },
+    {
+      "name": "Wentworthville",
+      "suburb": "Wentworthville",
+      "state": "NSW",
+      "postcode": 2145,
+      "demographic": ["Young Families", "Adults"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Macquarie Park",
+      "suburb": "Macquarie Park",
+      "state": "NSW",
+      "postcode": 2113,
+      "demographic": ["Young Adults"],
+      "schedule": ["Tuesday", "??:00:00"]
+    },
+    {
+      "name": "Olympic Park",
+      "suburb": "Sydney Olympic Park",
+      "state": "NSW",
+      "postcode": 2127,
+      "demographic": ["Young Families", "Adults"],
+      "schedule": ["Friday", "19:00:00"]
+    },
+    {
+      "name": "Newington Young Adults",
+      "suburb": "Newington",
+      "state": "NSW",
+      "postcode": 2127,
+      "demographic": ["Young Adults"],
+      "schedule": ["Wednesday", "19:00:00"]
+    },
+    {
+      "name": "Liverpool",
+      "suburb": "Liverpool",
+      "state": "NSW",
+      "postcode": 2170,
+      "demographic": ["??"],
+      "schedule": ["Tuesday", "18:30:00"]
+    },
+    {
+      "name": "Hills Babies",
+      "suburb": "Beaumont Hills",
+      "state": "NSW",
+      "postcode": 2155,
+      "demographic": ["Young Families"],
+      "schedule": ["Wednesday", "17:30:00"]
+    },
+    {
+      "name": "Preston",
+      "suburb": "Liverpool",
+      "state": "NSW",
+      "postcode": 2170,
+      "demographic": ["Families"],
+      "schedule": ["Friday", "19:00:00"]
+    },
+    {
+      "name": "Windsor Downs",
+      "suburb": "Windsor Downs",
+      "state": "NSW",
+      "postcode": 2756,
+      "demographic": ["??"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Zetland",
+      "suburb": "Zetland",
+      "state": "NSW",
+      "postcode": 2017,
+      "demographic": ["??"],
+      "schedule": ["Saturday", "10:00:00"]
+    },
+    {
+      "name": "Bella Vista / Baulkham Hills",
+      "suburb": "Bella Vista",
+      "state": "NSW",
+      "postcode": 2153,
+      "demographic": ["??"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Wentworth Point",
+      "suburb": "Wentworth Point",
+      "state": "NSW",
+      "postcode": 2127,
+      "demographic": ["??"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Dundas",
+      "suburb": "Dundas",
+      "state": "NSW",
+      "postcode": 2117,
+      "demographic": ["??"],
+      "schedule": ["Wednesday", "19:00:00"]
+    },
+    {
+      "name": "Epping",
+      "suburb": "Epping",
+      "state": "NSW",
+      "postcode": 2121,
+      "demographic": ["Young Adults"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Riverstone Adults",
+      "suburb": "Riverstone",
+      "state": "NSW",
+      "postcode": 2765,
+      "demographic": ["Young Families", "Adults"],
+      "schedule": ["Friday", "19:30:00"]
+    },
+    {
+      "name": "North Sydney Families",
+      "suburb": "North Sydney",
+      "state": "NSW",
+      "postcode": 2060,
+      "demographic": ["Families", "Adults"],
+      "schedule": ["Friday", "18:30:00"]
+    },
+    {
+      "name": "Belmore",
+      "suburb": "Belmore",
+      "state": "NSW",
+      "postcode": 2192,
+      "demographic": ["??"],
+      "schedule": ["??", "18:30:00"]
+    },
+    {
+      "name": "Newington",
+      "suburb": "Newington",
+      "state": "NSW",
+      "postcode": 2127,
+      "demographic": ["??"],
+      "schedule": ["??", "19:00:00"]
+    },
+    {
+      "name": "Schofields",
+      "suburb": "Schofields",
+      "state": "NSW",
+      "postcode": 2762,
+      "demographic": ["Young Adults"],
+      "schedule": ["Wednesday", "19:00:00"]
+    },
+    {
+      "name": "Castle Hill Young Families",
+      "suburb": "Castle Hill",
+      "state": "NSW",
+      "postcode": 2154,
+      "demographic": ["Young Families"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Arncliffe",
+      "suburb": "Arncliffe",
+      "state": "NSW",
+      "postcode": 2205,
+      "demographic": ["Young Adults"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Lane Cove",
+      "suburb": "Lane Cove",
+      "state": "NSW",
+      "postcode": 2066,
+      "demographic": ["??"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Stanhope Fam",
+      "suburb": "Stanhope Gardens",
+      "state": "NSW",
+      "postcode": 2768,
+      "demographic": ["??"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Waterloo Families",
+      "suburb": "Waterloo",
+      "state": "NSW",
+      "postcode": 2017,
+      "demographic": ["Families"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Mums",
+      "suburb": "??",
+      "state": "NSW",
+      "postcode": 0,
+      "demographic": ["Young Families"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Parramatta Young Adults",
+      "suburb": "Parramatta",
+      "state": "NSW",
+      "postcode": 2150,
+      "demographic": ["Young Adults", "Men"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Newington Daytime",
+      "suburb": "Newington",
+      "state": "NSW",
+      "postcode": 2127,
+      "demographic": ["Young Adults"],
+      "schedule": ["??", "??:00:00"]
+    },
+    {
+      "name": "Seven Hills",
+      "suburb": "Seven Hills",
+      "state": "NSW",
+      "postcode": 2147,
+      "demographic": ["??"],
+      "schedule": ["Saturday", "09:30:00"]
+    }
+  ]
+}

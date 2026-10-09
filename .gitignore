@@ -1,0 +1,11 @@
+node_modules/
+.astro/
+dist/
+playwright-report/
+test-results/
+.DS_Store
+.env
+.env.*
+data/*.zip
+data/Suburb_EPSG4326.json
+data/suburbs_raw.geojson

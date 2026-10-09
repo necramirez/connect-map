@@ -1,0 +1,290 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: #173d35;
+  background: #f7f8f4;
+  font-synthesis: none;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.site-header {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 28px;
+  border-bottom: 1px solid #dce3dc;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 19px;
+  letter-spacing: -0.6px;
+  font-weight: 700;
+}
+
+.brand-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #143d35;
+  color: #f7f8f4;
+  font-size: 27px;
+}
+
+main,
+main > astro-island {
+  display: block;
+  height: calc(100vh - 72px);
+  height: calc(100dvh - 72px);
+}
+
+.map-frame {
+  height: 100%;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+  background: #e5ebe3;
+}
+
+.suburb-status {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  max-width: calc(100% - 80px);
+  padding: 10px 14px;
+  border: 1px solid #dde4da;
+  border-radius: 10px;
+  background: #fbfcf9;
+  color: #173d35;
+  box-shadow: 0 4px 16px #163a3520;
+  font:
+    12px Inter,
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+}
+
+.suburb-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+}
+
+.suburb-legend span {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #c77d1b;
+  border-radius: 3px;
+  background: #c77d1b50;
+}
+
+.leaflet-tooltip p {
+  margin: 4px 0 0;
+}
+
+.connect-list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.connect-list li + li {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e0e6dd;
+}
+
+.connect-name,
+.connect-demographics {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.connect-name {
+  font-weight: 600;
+}
+
+.connect-demographics {
+  margin-top: 3px;
+  color: #52695f;
+}
+
+.directory-button,
+.directory-close {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #143d35;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.directory-button {
+  background: #143d35;
+  color: #fff;
+}
+
+.directory-button:hover {
+  background: #24584b;
+}
+
+.directory-close {
+  background: transparent;
+  color: #173d35;
+  border-color: #dde4da;
+}
+
+.directory-dialog {
+  width: min(1100px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 1px solid #dde4da;
+  border-radius: 16px;
+  background: #fbfcf9;
+  color: #173d35;
+  box-shadow: 0 16px 64px #163a3540;
+}
+
+.directory-dialog::backdrop {
+  background: #102a2466;
+}
+
+.directory-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #dde4da;
+}
+
+.directory-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.directory-search,
+.directory-message {
+  padding: 16px 24px;
+}
+
+.directory-search {
+  display: grid;
+  gap: 8px;
+}
+
+.directory-search label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.directory-search input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #cbd6cc;
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+  color: inherit;
+}
+
+.directory-search p {
+  margin: 0;
+  color: #52695f;
+  font-size: 13px;
+}
+
+.directory-table-scroll {
+  max-height: 55dvh;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.directory-table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.directory-table th,
+.directory-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e6dd;
+  text-align: left;
+  vertical-align: top;
+}
+
+.directory-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #edf2eb;
+}
+
+.directory-table tbody th {
+  font-weight: 600;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 3px solid #c77d1b;
+  outline-offset: 4px;
+}
+
+.map-fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .site-header {
+    padding: 0 16px;
+  }
+
+  .directory-header,
+  .directory-search,
+  .directory-message {
+    padding: 16px;
+  }
+}

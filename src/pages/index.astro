@@ -1,0 +1,49 @@
+---
+import MapView from '../components/MapView';
+import ConnectDirectory from '../components/ConnectDirectory';
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Explore suburb boundaries and browse connect details with Connect Map, an interactive map built with Leaflet."
+    />
+    <meta name="theme-color" content="#143d35" />
+    <title>Connect Map</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a
+        class="brand"
+        href={import.meta.env.BASE_URL}
+        aria-label="Connect Map home"
+      >
+        <span class="brand-icon" aria-hidden="true">
+          ⌖
+        </span>
+        <h1>Connect Map</h1>
+      </a>
+      <ConnectDirectory client:load />
+    </header>
+    <main>
+      <MapView client:only="react">
+        <div slot="fallback" class="map-fallback" role="status">
+          <span class="loading-message">Loading your map…</span>
+          <noscript>
+            <style is:global>
+              .loading-message {
+                display: none;
+              }
+            </style>
+            <p>Enable JavaScript to explore the interactive map.</p>
+          </noscript>
+        </div>
+      </MapView>
+    </main>
+  </body>
+</html>
