@@ -75,6 +75,54 @@ If the repository name or hosting domain changes, update `site` and `base` in
 `astro.config.ts` and the preview URL in `playwright.config.ts`. For a custom domain
 hosted at its root, remove the project-name base.
 
+## Acquiring and simplifying suburb boundaries
+
+### Export from Spatial NSW
+
+1. Open Spatial NSW's [Suburb - NSW Administrative Boundaries Theme - GDA2020 Service](https://portal.spatial.nsw.gov.au/portal/home/item.html?id=56651906158a416e94fd244201782464).
+2. Select **Export Data**.
+3. When selecting layers/tables to export, select **Suburb**.
+4. Draw a polygon around the **Sydney metropolitan area** to define the export region.
+5. Export as **GeoJSON WGS84**, with datum **GDA2020** and coordinate system
+   **Geographic**. Save the downloaded JSON as `data/Suburb_EPSG4326.json`.
+
+The export is a large JSON file containing the GeoJSON FeatureCollection under a
+`Suburb` property, rather than a standalone GeoJSON file. Extract that collection
+before simplifying it.
+
+### Extract and simplify
+
+Run these commands from the repository root:
+
+1. Extract the `Suburb` collection into `data/suburbs_raw.geojson`:
+
+   ```sh
+   node --input-type=module <<'NODE'
+   import { readFile, writeFile } from 'node:fs/promises';
+   const exported = JSON.parse(await readFile('data/Suburb_EPSG4326.json', 'utf8'));
+   if (exported.Suburb?.type !== 'FeatureCollection') {
+     throw new Error('Export must contain a Suburb FeatureCollection.');
+   }
+   await writeFile('data/suburbs_raw.geojson', JSON.stringify(exported.Suburb));
+   NODE
+   ```
+
+2. Simplify the collection with [Mapshaper](https://mapshaper.org/):
+
+   ```sh
+   npx mapshaper data/suburbs_raw.geojson -simplify interval=100m -o data/suburbs.geojson
+   ```
+
+Mapshaper is a **topology-aware shape editor**. Simplifying the suburb collection
+as a whole keeps shared boundaries aligned, unlike simplifying each polygon
+independently. The command uses a **100 m simplification interval** to reduce the
+geometry size.
+
+The application reads the resulting `data/suburbs.geojson`. Keep the original
+export and raw extracted GeoJSON local; both are ignored by Git. Review the output
+on the map and run `pnpm build` and `pnpm test` before committing a refreshed
+simplified dataset.
+
 ## Map tiles and local data
 
 The interactive map requires JavaScript and an internet connection for
