@@ -18,9 +18,10 @@ Open <http://localhost:4321/connect-map/>. Pan or zoom the map. The header locat
 label and starting-location panel are not displayed. Suburbs with no locations
 have gray borders. Suburbs
 with a name matching a location's `suburb` in `data/connects.json` are highlighted
-in amber. Hover for the suburb name and location count; click for the suburb name
-and each connect's name and known demographics. Location counts appear only in
-tooltips, not popups. Postcodes, schedules, street addresses, and individual
+in amber. On devices with a mouse/fine pointer and hover support, hover for the
+suburb name and location count. Touch/mobile devices do not show hover tooltips.
+Click or tap a suburb for its name and each connect's name and known demographics.
+Location counts appear only in desktop tooltips, not popups. Postcodes, schedules, street addresses, and individual
 location markers are not displayed on the map. Missing names show **Unnamed
 connect**; unknown or missing demographic labels are omitted from popups.
 

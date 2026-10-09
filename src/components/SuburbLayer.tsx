@@ -29,12 +29,13 @@ function bindSuburbDetails(feature: Feature, layer: Layer) {
   const name = document.createElement('strong');
   name.textContent = String(feature.properties?.suburbname ?? 'Unnamed suburb');
   const count = getLocationCount(feature);
-  const locations = document.createElement('p');
-  locations.textContent = `${count} ${count === 1 ? 'location' : 'locations'}`;
-
-  const tooltip = document.createElement('div');
-  tooltip.append(name.cloneNode(true), locations);
-  layer.bindTooltip(tooltip, { sticky: true });
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const locations = document.createElement('p');
+    locations.textContent = `${count} ${count === 1 ? 'location' : 'locations'}`;
+    const tooltip = document.createElement('div');
+    tooltip.append(name.cloneNode(true), locations);
+    layer.bindTooltip(tooltip, { sticky: true });
+  }
 
   const popup = document.createElement('div');
   popup.append(name);

@@ -153,8 +153,9 @@ test('published assets contain safe connect summaries but no private connection 
   await inspect('dist');
 });
 
-test('highlights actual matching suburbs and shows their location count', async ({
+test('keeps desktop hover details and mobile tap details for matching suburbs', async ({
   page,
+  hasTouch,
 }) => {
   await page.route('https://tile.openstreetmap.org/**', (route) =>
     route.fulfill({ contentType: 'image/png', body: transparentTile }),
@@ -172,16 +173,29 @@ test('highlights actual matching suburbs and shows their location count', async 
   const point = await findSuburbPoint(page, true);
   expect(point, 'A matching suburb should be painted amber').not.toBeNull();
   if (!point) throw new Error('No highlighted suburb found.');
+  const supportsHover = await page.evaluate(
+    () => window.matchMedia('(hover: hover) and (pointer: fine)').matches,
+  );
+  expect(supportsHover).toBe(!hasTouch);
   await page.mouse.move(point.x, point.y);
-  const suburbName = await page.locator('.leaflet-tooltip strong').innerText();
+  const tooltipText = supportsHover
+    ? await page.locator('.leaflet-tooltip').innerText()
+    : null;
+  if (!supportsHover)
+    await expect(page.locator('.leaflet-tooltip')).toHaveCount(0);
+  if (hasTouch) await page.touchscreen.tap(point.x, point.y);
+  else await page.mouse.click(point.x, point.y);
+  const popup = page.locator('.leaflet-popup-content');
+  await expect(popup).toBeVisible();
+  const suburbName = await popup.locator('strong').innerText();
   const feature = collection.features.find(
     (feature) => feature.properties?.suburbname === suburbName,
   );
   const count = Number(feature?.properties?.locationCount ?? 0);
+  expect(count).toBeGreaterThan(0);
   const countLabel = `${count} ${count === 1 ? 'location' : 'locations'}`;
-  await expect(page.locator('.leaflet-tooltip')).toContainText(countLabel);
-  await page.mouse.click(point.x, point.y);
-  const popup = page.locator('.leaflet-popup-content');
+  if (supportsHover) expect(tooltipText).toContain(countLabel);
+  else await expect(page.locator('.leaflet-tooltip')).toHaveCount(0);
   await expect(popup).not.toContainText(countLabel);
   await expect(popup).not.toContainText('Postcode');
   const connects = feature?.properties?.connects as ConnectSummary[];
@@ -199,8 +213,9 @@ test('highlights actual matching suburbs and shows their location count', async 
   await expect(page.locator('.leaflet-marker-icon')).toHaveCount(0);
 });
 
-test('shows plural and zero location counts in suburb tooltips', async ({
+test('shows hover counts only on hover-capable devices and preserves touch popups', async ({
   page,
+  hasTouch,
 }) => {
   const fixture: FeatureCollection = {
     type: 'FeatureCollection',
@@ -237,8 +252,16 @@ test('shows plural and zero location counts in suburb tooltips', async ({
     }),
   );
   for (const count of [2, 0]) {
-    if (fixture.features[0]?.properties)
+    if (fixture.features[0]?.properties) {
       fixture.features[0].properties.locationCount = count;
+      fixture.features[0].properties.connects = Array.from(
+        { length: count },
+        (_, index) => ({
+          name: `Connect ${index + 1}`,
+          demographics: [],
+        }),
+      );
+    }
     await page.goto('./');
     await expect(page.getByLabel('Suburb boundaries')).toHaveText(
       '1 suburbs loaded',
@@ -248,8 +271,18 @@ test('shows plural and zero location counts in suburb tooltips', async ({
     if (!point)
       throw new Error('Test suburb was not rendered with the expected style.');
     await page.mouse.move(point.x, point.y);
-    await expect(page.locator('.leaflet-tooltip')).toContainText(
-      `${count} locations`,
-    );
+    if (hasTouch) {
+      await expect(page.locator('.leaflet-tooltip')).toHaveCount(0);
+      await page.touchscreen.tap(point.x, point.y);
+    } else {
+      await expect(page.locator('.leaflet-tooltip')).toContainText(
+        `${count} locations`,
+      );
+      await page.mouse.click(point.x, point.y);
+    }
+    const popup = page.locator('.leaflet-popup-content');
+    await expect(popup.locator('strong')).toHaveText('TEST SUBURB');
+    await expect(popup.locator('.connect-name')).toHaveCount(count);
+    if (hasTouch) await expect(page.locator('.leaflet-tooltip')).toHaveCount(0);
   }
 });
