@@ -146,6 +146,38 @@ main > astro-island {
   padding: 12px;
 }
 
+.selected-suburb {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e0e6dd;
+}
+
+.selected-suburb strong,
+.selected-suburb-radius {
+  display: block;
+}
+
+.selected-suburb-radius {
+  margin-top: 3px;
+  color: #52695f;
+  font-size: 12px;
+}
+
+.selected-suburb button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #cbd6cc;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
 .suburb-search-message {
   margin: 8px 0 0;
   font-size: 12px;
@@ -168,6 +200,10 @@ main > astro-island {
     ui-sans-serif,
     system-ui,
     sans-serif;
+}
+
+.suburb-location-count {
+  margin: 4px 0 0;
 }
 
 .suburb-legend {

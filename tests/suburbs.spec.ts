@@ -36,6 +36,13 @@ test('loads the real suburb collection and draws interactive boundaries', async 
   await expect(page.getByLabel('Suburb boundaries')).toHaveText(
     '522 suburbs loaded',
   );
+  const suburbsWithLocations = collection.features.filter((feature) => {
+    const count = feature.properties?.locationCount;
+    return typeof count === 'number' && Number.isInteger(count) && count > 0;
+  }).length;
+  await expect(page.getByLabel('Suburbs with locations')).toHaveText(
+    `${suburbsWithLocations} suburbs with locations`,
+  );
   await expect.poll(async () => (await readMapView(page))?.zoom).toBe(12);
   const view = await readMapView(page);
   expect(view?.latitude).toBeCloseTo(-33.83309432488723, 3);
@@ -110,6 +117,7 @@ for (const failure of ['request', 'invalid data'] as const) {
     await expect(
       page.getByRole('alert', { name: 'Suburb boundaries' }),
     ).toHaveText('Suburb boundaries unavailable. Refresh to retry.');
+    await expect(page.getByLabel('Suburbs with locations')).toHaveCount(0);
     await page.getByRole('button', { name: 'Zoom in' }).click();
     await expect.poll(async () => (await readMapView(page))?.zoom).toBe(13);
     await expect(page.locator('.leaflet-zoom-anim')).toHaveCount(0);

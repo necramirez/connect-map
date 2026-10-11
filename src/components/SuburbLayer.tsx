@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
 import type { Feature, FeatureCollection } from 'geojson';
 import type { Layer, PathOptions } from 'leaflet';
-import { GeoJSON } from 'react-leaflet';
+import { GeoJSON, useMap } from 'react-leaflet';
 import SuburbSearch from './SuburbSearch';
+import SuburbRadius from './SuburbRadius';
+import {
+  calculateSuburbCentroid,
+  type SuburbSelection,
+} from '../lib/suburbCentroid';
 import {
   getKnownDemographics,
   type ConnectSummary,
@@ -26,7 +31,11 @@ function getSuburbStyle(feature?: Feature): PathOptions {
     : { color: '#9ca3af', weight: 2, fillOpacity: 0.08 };
 }
 
-function bindSuburbDetails(feature: Feature, layer: Layer) {
+function bindSuburbDetails(
+  feature: Feature,
+  layer: Layer,
+  selectSuburb: (feature: Feature) => boolean,
+) {
   const name = document.createElement('strong');
   name.textContent = String(feature.properties?.suburbname ?? 'Unnamed suburb');
   const count = getLocationCount(feature);
@@ -70,11 +79,31 @@ function bindSuburbDetails(feature: Feature, layer: Layer) {
     popup.append(emptyMessage);
   }
 
-  layer.bindPopup(popup, { minWidth: 240, maxWidth: 300, maxHeight: 260 });
+  layer.bindPopup(popup, {
+    minWidth: 240,
+    maxWidth: 300,
+    maxHeight: 260,
+    autoPan: false,
+  });
+  layer.on('click', () => selectSuburb(feature));
 }
 
 export default function SuburbLayer() {
+  const map = useMap();
   const [state, setState] = useState<LoadState>({ status: 'loading' });
+  const [selection, setSelection] = useState<SuburbSelection | null>(null);
+
+  function selectSuburb(feature: Feature, fitCircle = false): boolean {
+    const centroid = calculateSuburbCentroid(feature);
+    if (!centroid) return false;
+    setSelection({ feature, centroid, fitCircle });
+    return true;
+  }
+
+  function clearSelection() {
+    setSelection(null);
+    map.closePopup();
+  }
 
   useEffect(() => {
     const controller = new AbortController();
@@ -107,6 +136,13 @@ export default function SuburbLayer() {
     return () => controller.abort();
   }, []);
 
+  const suburbsWithLocations =
+    state.status === 'loaded'
+      ? state.collection.features.filter(
+          (feature) => getLocationCount(feature) > 0,
+        ).length
+      : 0;
+
   return (
     <>
       {state.status === 'loaded' && (
@@ -114,9 +150,17 @@ export default function SuburbLayer() {
           <GeoJSON
             data={state.collection}
             style={getSuburbStyle}
-            onEachFeature={bindSuburbDetails}
+            onEachFeature={(feature, layer) =>
+              bindSuburbDetails(feature, layer, selectSuburb)
+            }
           />
-          <SuburbSearch collection={state.collection} />
+          <SuburbRadius selection={selection} />
+          <SuburbSearch
+            collection={state.collection}
+            selection={selection}
+            onSelect={(feature) => selectSuburb(feature, true)}
+            onClear={clearSelection}
+          />
         </>
       )}
       <div className="suburb-status">
@@ -131,9 +175,18 @@ export default function SuburbLayer() {
             'Suburb boundaries unavailable. Refresh to retry.'}
         </div>
         {state.status === 'loaded' && (
-          <p className="suburb-legend">
-            <span aria-hidden="true" /> Amber: has locations
-          </p>
+          <>
+            <p
+              className="suburb-location-count"
+              aria-label="Suburbs with locations"
+            >
+              {suburbsWithLocations}{' '}
+              {suburbsWithLocations === 1 ? 'suburb' : 'suburbs'} with locations
+            </p>
+            <p className="suburb-legend">
+              <span aria-hidden="true" /> Amber: has locations
+            </p>
+          </>
         )}
       </div>
     </>

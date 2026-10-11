@@ -1,20 +1,42 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import type { Feature, FeatureCollection } from 'geojson';
-import { DomEvent, geoJSON, Tooltip } from 'leaflet';
+import { DomEvent, Tooltip } from 'leaflet';
 import { useMap } from 'react-leaflet';
 import { findMatchingSuburbs, getSuburbName } from '../lib/suburbSearch';
+import type { SuburbSelection } from '../lib/suburbCentroid';
 
 export default function SuburbSearch({
   collection,
+  selection,
+  onSelect,
+  onClear,
 }: {
   collection: FeatureCollection;
+  selection: SuburbSelection | null;
+  onSelect: (feature: Feature) => boolean;
+  onClear: () => void;
 }) {
   const map = useMap();
   const container = useRef<HTMLDivElement>(null);
   const identifier = useId();
   const inputIdentifier = `${identifier}-input`;
   const resultsIdentifier = `${identifier}-results`;
-  const [query, setQuery] = useState('');
+  const [queryState, setQueryState] = useState<{
+    value: string;
+    selection: SuburbSelection | null;
+  }>({
+    value: '',
+    selection: null,
+  });
+  const query =
+    queryState.selection === selection
+      ? queryState.value
+      : selection
+        ? getSuburbName(selection.feature)
+        : '';
+  function setQuery(value: string) {
+    setQueryState({ value, selection });
+  }
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [message, setMessage] = useState('');
@@ -41,8 +63,7 @@ export default function SuburbSearch({
 
   function selectSuburb(feature: Feature) {
     const name = getSuburbName(feature);
-    const bounds = geoJSON(feature).getBounds();
-    if (!bounds.isValid()) {
+    if (!onSelect(feature)) {
       setMessage(`No map boundary is available for ${name}.`);
       return;
     }
@@ -50,11 +71,10 @@ export default function SuburbSearch({
     map.eachLayer((layer) => {
       if (layer instanceof Tooltip) map.closeTooltip(layer);
     });
-    map.fitBounds(bounds, { padding: [32, 32], maxZoom: 15, animate: false });
     setQuery(name);
     setOpen(false);
     setActiveIndex(-1);
-    setMessage(`Centered on ${name}.`);
+    setMessage('');
     map.getContainer().focus({ preventScroll: true });
   }
 
@@ -141,6 +161,33 @@ export default function SuburbSearch({
             ))}
           </ul>
           {!matches.length && <p role="status">No matching suburbs.</p>}
+        </div>
+      )}
+      {selection && (
+        <div
+          className="selected-suburb"
+          aria-label="Selected suburb"
+          role="status"
+        >
+          <span>
+            <strong>{getSuburbName(selection.feature)}</strong>
+            <span className="selected-suburb-radius">
+              10 km radius around centroid
+            </span>
+          </span>
+          <button
+            type="button"
+            aria-label="Clear selection"
+            onClick={() => {
+              onClear();
+              setQuery('');
+              setOpen(false);
+              setActiveIndex(-1);
+              setMessage('Selection cleared.');
+            }}
+          >
+            Clear
+          </button>
         </div>
       )}
       {message && (

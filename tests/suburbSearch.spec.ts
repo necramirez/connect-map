@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import type { Feature, FeatureCollection } from 'geojson';
 import { findMatchingSuburbs, getSuburbName } from '../src/lib/suburbSearch';
 import { readMapView } from './helpers/mapView';
+import { calculateSuburbCentroid } from '../src/lib/suburbCentroid';
 
 const transparentTile = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6DeUAAAAASUVORK5CYII=',
@@ -56,33 +57,17 @@ async function expectedCenter(name: string) {
   const feature = collection.features.find(
     (feature) => getSuburbName(feature) === name,
   );
-  if (!feature?.geometry || !('coordinates' in feature.geometry))
-    throw new Error(`Missing boundary for ${name}`);
-  let minimumLongitude = Infinity;
-  let maximumLongitude = -Infinity;
-  let minimumLatitude = Infinity;
-  let maximumLatitude = -Infinity;
-  function visit(value: unknown) {
-    if (!Array.isArray(value)) return;
-    if (typeof value[0] === 'number' && typeof value[1] === 'number') {
-      minimumLongitude = Math.min(minimumLongitude, value[0]);
-      maximumLongitude = Math.max(maximumLongitude, value[0]);
-      minimumLatitude = Math.min(minimumLatitude, value[1]);
-      maximumLatitude = Math.max(maximumLatitude, value[1]);
-    } else value.forEach(visit);
-  }
-  visit(feature.geometry.coordinates);
-  return {
-    longitude: (minimumLongitude + maximumLongitude) / 2,
-    latitude: (minimumLatitude + maximumLatitude) / 2,
-  };
+  const centroid = feature ? calculateSuburbCentroid(feature) : null;
+  if (!centroid) throw new Error(`Missing centroid for ${name}`);
+  return centroid;
 }
 
 async function expectCentered(page: Page, name: string) {
   const expected = await expectedCenter(name);
-  await expect(
-    page.getByText(`Centered on ${name}.`, { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByLabel('Selected suburb')).toContainText(name);
+  await expect(page.getByLabel('Selected suburb')).toContainText(
+    '10 km radius around centroid',
+  );
   await expect
     .poll(async () =>
       Math.abs(
@@ -96,8 +81,11 @@ async function expectCentered(page: Page, name: string) {
     )
     .toBeLessThan(0.0005);
   const view = await readMapView(page);
-  expect(view?.zoom).toBeLessThanOrEqual(15);
-  expect(view?.zoom).toBeGreaterThanOrEqual(12);
+  expect(view?.zoom).toBeLessThanOrEqual(13);
+  expect(view?.zoom).toBeGreaterThanOrEqual(9);
+  await expect(
+    page.locator('.leaflet-suburb-radius-pane canvas'),
+  ).toBeVisible();
   await expect(
     page.getByRole('listbox', { name: 'Matching suburbs' }),
   ).toHaveCount(0);

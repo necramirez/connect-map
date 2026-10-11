@@ -18,7 +18,9 @@ Open <http://localhost:4321/connect-map/>. Pan or zoom the map. The header locat
 label and starting-location panel are not displayed. Suburbs with no locations
 have gray borders. Suburbs
 with a name matching a location's `suburb` in `data/connects.json` are highlighted
-in amber. On devices with a mouse/fine pointer and hover support, hover for the
+in amber. The map legend shows both the number of suburbs loaded and the number
+with at least one matching location; each suburb counts once regardless of how
+many connects it contains. On devices with a mouse/fine pointer and hover support, hover for the
 suburb name and location count. Touch/mobile devices do not show hover tooltips.
 Click or tap a suburb for its name and each connect's name and known demographics.
 Location counts appear only in desktop tooltips, not popups. Postcodes, schedules, street addresses, and individual
@@ -27,9 +29,18 @@ connect**; unknown or missing demographic labels are omitted from popups.
 
 Use **Search suburbs** on the map to find a suburb by name. Search ignores case
 and whitespace, lists partial matches, and prioritizes an exact name. Select a
-result, or use the arrow keys and Enter, to center the map and fit the suburb's
-boundary in view. Escape closes the results without moving the map. Search uses
-the already-loaded suburb dataset; it does not query an external geocoder.
+result, or use the arrow keys and Enter, to select the suburb. Clicking or tapping
+a suburb on the map selects it too and still opens its connect details. Either
+selection draws a blue **10 km radius** circle around the suburb's centroid.
+Map clicks/taps preserve the current center and zoom; search selections recenter
+and fit the circle in view. The circle does not intercept map clicks. Use **Clear**
+in the search control to remove the selection without moving the map.
+
+Centroids are area-weighted from the simplified Polygon/MultiPolygon coordinates,
+with holes subtracted and all polygon parts included. They are suburb centroids,
+not individual connect locations. Suburbs without a usable polygon boundary
+cannot be selected. Escape closes search results without moving the map. Search
+uses the already-loaded suburb dataset; it does not query an external geocoder.
 
 Select **All connects** in the header for a searchable table of every connect's
 name, suburb, state, postcode, known demographics, and schedule, including connects
