@@ -67,6 +67,90 @@ main > astro-island {
   background: #e5ebe3;
 }
 
+.suburb-search {
+  position: absolute;
+  left: 16px;
+  bottom: 28px;
+  z-index: 1000;
+  width: min(340px, calc(100% - 32px));
+  padding: 12px;
+  border: 1px solid #dde4da;
+  border-radius: 12px;
+  background: #fbfcf9;
+  color: #173d35;
+  box-shadow: 0 4px 16px #163a3520;
+  font:
+    13px Inter,
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+}
+
+.suburb-search label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.suburb-search input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid #cbd6cc;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.suburb-search-dropdown {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  left: 0;
+  overflow: hidden;
+  border: 1px solid #dde4da;
+  border-radius: 10px;
+  background: #fbfcf9;
+  box-shadow: 0 4px 16px #163a3520;
+}
+
+.suburb-search-dropdown ul {
+  max-height: min(240px, calc(100dvh - 220px));
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+
+.suburb-search-dropdown button {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.suburb-search-dropdown button:hover,
+.suburb-search-dropdown button[aria-selected='true'] {
+  background: #edf2eb;
+}
+
+.suburb-search-dropdown p {
+  margin: 0;
+  padding: 12px;
+}
+
+.suburb-search-message {
+  margin: 8px 0 0;
+  font-size: 12px;
+}
+
 .suburb-status {
   position: absolute;
   top: 16px;

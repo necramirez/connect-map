@@ -25,6 +25,12 @@ Location counts appear only in desktop tooltips, not popups. Postcodes, schedule
 location markers are not displayed on the map. Missing names show **Unnamed
 connect**; unknown or missing demographic labels are omitted from popups.
 
+Use **Search suburbs** on the map to find a suburb by name. Search ignores case
+and whitespace, lists partial matches, and prioritizes an exact name. Select a
+result, or use the arrow keys and Enter, to center the map and fit the suburb's
+boundary in view. Escape closes the results without moving the map. Search uses
+the already-loaded suburb dataset; it does not query an external geocoder.
+
 Select **All connects** in the header for a searchable table of every connect's
 name, suburb, state, postcode, known demographics, and schedule, including connects
 that do not match a map feature. Exact addresses are excluded. Unknown fields

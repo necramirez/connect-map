@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Feature, FeatureCollection } from 'geojson';
 import type { Layer, PathOptions } from 'leaflet';
 import { GeoJSON } from 'react-leaflet';
+import SuburbSearch from './SuburbSearch';
 import {
   getKnownDemographics,
   type ConnectSummary,
@@ -109,11 +110,14 @@ export default function SuburbLayer() {
   return (
     <>
       {state.status === 'loaded' && (
-        <GeoJSON
-          data={state.collection}
-          style={getSuburbStyle}
-          onEachFeature={bindSuburbDetails}
-        />
+        <>
+          <GeoJSON
+            data={state.collection}
+            style={getSuburbStyle}
+            onEachFeature={bindSuburbDetails}
+          />
+          <SuburbSearch collection={state.collection} />
+        </>
       )}
       <div className="suburb-status">
         <div
