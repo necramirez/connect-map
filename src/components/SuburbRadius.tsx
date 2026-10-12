@@ -4,7 +4,7 @@ import { Circle, CircleMarker, Pane, useMap } from 'react-leaflet';
 import {
   selectionRadiusMetres,
   type SuburbSelection,
-} from '../lib/suburbCentroid';
+} from '../lib/suburbPoint';
 
 export default function SuburbRadius({
   selection,
@@ -18,7 +18,7 @@ export default function SuburbRadius({
       if (layer instanceof Tooltip) map.closeTooltip(layer);
     });
     if (!selection.fitCircle) return;
-    const { latitude, longitude } = selection.centroid;
+    const { latitude, longitude } = selection.point;
     map.fitBounds(
       latLng(latitude, longitude).toBounds(selectionRadiusMetres * 2),
       {
@@ -30,7 +30,7 @@ export default function SuburbRadius({
   }, [map, selection]);
 
   const center = selection
-    ? latLng(selection.centroid.latitude, selection.centroid.longitude)
+    ? latLng(selection.point.latitude, selection.point.longitude)
     : null;
   return (
     <Pane name="suburb-radius" style={{ zIndex: 450, pointerEvents: 'none' }}>

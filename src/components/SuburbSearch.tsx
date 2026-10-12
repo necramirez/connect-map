@@ -3,7 +3,7 @@ import type { Feature, FeatureCollection } from 'geojson';
 import { DomEvent, Tooltip } from 'leaflet';
 import { useMap } from 'react-leaflet';
 import { findMatchingSuburbs, getSuburbName } from '../lib/suburbSearch';
-import type { SuburbSelection } from '../lib/suburbCentroid';
+import type { SuburbSelection } from '../lib/suburbPoint';
 
 export default function SuburbSearch({
   collection,
@@ -172,7 +172,7 @@ export default function SuburbSearch({
           <span>
             <strong>{getSuburbName(selection.feature)}</strong>
             <span className="selected-suburb-radius">
-              10 km radius around centroid
+              10 km radius around suburb point
             </span>
           </span>
           <button

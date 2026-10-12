@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import type { Feature, FeatureCollection } from 'geojson';
 import { findMatchingSuburbs, getSuburbName } from '../src/lib/suburbSearch';
 import { readMapView } from './helpers/mapView';
-import { calculateSuburbCentroid } from '../src/lib/suburbCentroid';
+import { calculateSuburbPoint } from '../src/lib/suburbPoint';
 
 const transparentTile = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6DeUAAAAASUVORK5CYII=',
@@ -57,16 +57,16 @@ async function expectedCenter(name: string) {
   const feature = collection.features.find(
     (feature) => getSuburbName(feature) === name,
   );
-  const centroid = feature ? calculateSuburbCentroid(feature) : null;
-  if (!centroid) throw new Error(`Missing centroid for ${name}`);
-  return centroid;
+  const point = feature ? calculateSuburbPoint(feature) : null;
+  if (!point) throw new Error(`Missing interior point for ${name}`);
+  return point;
 }
 
 async function expectCentered(page: Page, name: string) {
   const expected = await expectedCenter(name);
   await expect(page.getByLabel('Selected suburb')).toContainText(name);
   await expect(page.getByLabel('Selected suburb')).toContainText(
-    '10 km radius around centroid',
+    '10 km radius around suburb point',
   );
   await expect
     .poll(async () =>

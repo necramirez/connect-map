@@ -1,9 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import type { Feature, FeatureCollection } from 'geojson';
-import {
-  calculateSuburbCentroid,
-  type SuburbCentroid,
-} from '../src/lib/suburbCentroid';
+import { calculateSuburbPoint, type SuburbPoint } from '../src/lib/suburbPoint';
 import { readMapView } from './helpers/mapView';
 import { readRadiusCanvas } from './helpers/radiusCanvas';
 
@@ -50,30 +47,30 @@ const features: Feature[] = [
   },
 ];
 
-function centroidFor(name: string): SuburbCentroid {
+function pointFor(name: string): SuburbPoint {
   const feature = features.find(
     (feature) => feature.properties?.suburbname === name,
   );
-  const centroid = feature ? calculateSuburbCentroid(feature) : null;
-  if (!centroid) throw new Error('Missing test centroid');
-  return centroid;
+  const point = feature ? calculateSuburbPoint(feature) : null;
+  if (!point) throw new Error('Missing test point');
+  return point;
 }
 
-function project(centroid: SuburbCentroid, zoom: number) {
+function project(point: SuburbPoint, zoom: number) {
   const size = 256 * 2 ** zoom;
-  const sine = Math.sin((centroid.latitude * Math.PI) / 180);
+  const sine = Math.sin((point.latitude * Math.PI) / 180);
   return {
-    horizontal: ((centroid.longitude + 180) / 360) * size,
+    horizontal: ((point.longitude + 180) / 360) * size,
     vertical: (0.5 - Math.log((1 + sine) / (1 - sine)) / (4 * Math.PI)) * size,
   };
 }
 
-async function coordinatesOnMap(page: Page, centroid: SuburbCentroid) {
+async function coordinatesOnMap(page: Page, point: SuburbPoint) {
   const view = await readMapView(page);
   const bounds = await page.locator('.leaflet-container').boundingBox();
   if (!view || !bounds) throw new Error('Map view is not ready');
   const center = project(view, view.zoom);
-  const target = project(centroid, view.zoom);
+  const target = project(point, view.zoom);
   return {
     x: bounds.x + bounds.width / 2 + target.horizontal - center.horizontal,
     y: bounds.y + bounds.height / 2 + target.vertical - center.vertical,
@@ -81,30 +78,26 @@ async function coordinatesOnMap(page: Page, centroid: SuburbCentroid) {
 }
 
 async function selectOnMap(page: Page, name: string, hasTouch: boolean) {
-  const point = await coordinatesOnMap(page, centroidFor(name));
+  const point = await coordinatesOnMap(page, pointFor(name));
   if (hasTouch) await page.touchscreen.tap(point.x, point.y);
   else await page.mouse.click(point.x, point.y);
 }
 
 async function expectRadius(page: Page, name: string, centered = true) {
-  const centroid = centroidFor(name);
+  const point = pointFor(name);
   await expect(page.getByLabel('Selected suburb')).toContainText(name);
   await expect(page.getByLabel('Selected suburb')).toContainText(
-    '10 km radius around centroid',
+    '10 km radius around suburb point',
   );
   if (centered) {
     await expect
       .poll(async () =>
-        Math.abs(
-          ((await readMapView(page))?.longitude ?? 0) - centroid.longitude,
-        ),
+        Math.abs(((await readMapView(page))?.longitude ?? 0) - point.longitude),
       )
       .toBeLessThan(0.0005);
     await expect
       .poll(async () =>
-        Math.abs(
-          ((await readMapView(page))?.latitude ?? 0) - centroid.latitude,
-        ),
+        Math.abs(((await readMapView(page))?.latitude ?? 0) - point.latitude),
       )
       .toBeLessThan(0.0005);
   }
@@ -114,7 +107,7 @@ async function expectRadius(page: Page, name: string, centered = true) {
   const drawing = await readRadiusCanvas(page);
   const view = await readMapView(page);
   if (!drawing || !view) throw new Error('Radius was not drawn');
-  const expectedCenter = await coordinatesOnMap(page, centroid);
+  const expectedCenter = await coordinatesOnMap(page, point);
   if (centered)
     expect(Math.abs(drawing.centerX - expectedCenter.x)).toBeLessThan(3);
   expect(Math.abs(drawing.centerY - expectedCenter.y)).toBeLessThan(3);
@@ -141,7 +134,7 @@ async function expectRadius(page: Page, name: string, centered = true) {
     }, expectedCenter);
   expect(centerPainted).toBe(true);
   const metresPerPixel =
-    (2 * Math.PI * 6371000 * Math.cos((centroid.latitude * Math.PI) / 180)) /
+    (2 * Math.PI * 6371000 * Math.cos((point.latitude * Math.PI) / 180)) /
     (256 * 2 ** view.zoom);
   const radiusMetres =
     (centered ? drawing.radiusPixels : drawing.verticalRadiusPixels) *
@@ -187,6 +180,43 @@ test('map selection preserves center and zoom while showing its radius and detai
   await expect(
     page.getByRole('combobox', { name: 'Search suburbs' }),
   ).toHaveValue('ALPHA');
+  if (hasTouch) await expect(page.locator('.leaflet-tooltip')).toHaveCount(0);
+});
+
+test('anchors details at the polylabel point after an off-center click or tap', async ({
+  page,
+  hasTouch,
+}) => {
+  const initialView = await readMapView(page);
+  const clicked = await coordinatesOnMap(page, {
+    longitude: 151.0415,
+    latitude: -33.8365,
+  });
+  const expected = await coordinatesOnMap(page, pointFor('ALPHA'));
+  if (hasTouch) await page.touchscreen.tap(clicked.x, clicked.y);
+  else await page.mouse.click(clicked.x, clicked.y);
+  const popup = page.locator('.leaflet-popup:visible');
+  await expect(popup).toHaveCount(1);
+  await expect(popup.locator('.leaflet-popup-content strong')).toHaveText(
+    'ALPHA',
+  );
+  const anchor = await popup.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    return {
+      x: bounds.left + bounds.width / 2,
+      y:
+        bounds.bottom +
+        parseFloat(style.marginBottom) +
+        parseFloat(style.bottom),
+    };
+  });
+  expect(Math.abs(anchor.x - expected.x)).toBeLessThan(3);
+  expect(Math.abs(anchor.y - expected.y)).toBeLessThan(3);
+  expect(
+    Math.hypot(anchor.x - clicked.x, anchor.y - clicked.y),
+  ).toBeGreaterThan(8);
+  expect(await readMapView(page)).toEqual(initialView);
   if (hasTouch) await expect(page.locator('.leaflet-tooltip')).toHaveCount(0);
 });
 

@@ -30,15 +30,18 @@ connect**; unknown or missing demographic labels are omitted from popups.
 Use **Search suburbs** on the map to find a suburb by name. Search ignores case
 and whitespace, lists partial matches, and prioritizes an exact name. Select a
 result, or use the arrow keys and Enter, to select the suburb. Clicking or tapping
-a suburb on the map selects it too and still opens its connect details. Either
-selection draws a blue **10 km radius** circle around the suburb's centroid.
+a suburb on the map selects it too and opens its connect details, anchored at the
+suburb's polylabel point rather than the click/tap location. Either selection
+draws a blue **10 km radius** circle around that same interior point.
 Map clicks/taps preserve the current center and zoom; search selections recenter
 and fit the circle in view. The circle does not intercept map clicks. Use **Clear**
 in the search control to remove the selection without moving the map.
 
-Centroids are area-weighted from the simplified Polygon/MultiPolygon coordinates,
-with holes subtracted and all polygon parts included. They are suburb centroids,
-not individual connect locations. Suburbs without a usable polygon boundary
+Points are placed with [Polylabel](https://github.com/mapbox/polylabel), which
+finds an interior point away from polygon edges and holes. For MultiPolygons, the
+component with the greatest interior clearance supplies the point. The search
+precision is `0.00001` coordinate degrees. These are suburb points, not individual
+connect locations. Suburbs without a usable polygon boundary
 cannot be selected. Escape closes search results without moving the map. Search
 uses the already-loaded suburb dataset; it does not query an external geocoder.
 

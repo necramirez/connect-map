@@ -5,9 +5,10 @@ import { GeoJSON, useMap } from 'react-leaflet';
 import SuburbSearch from './SuburbSearch';
 import SuburbRadius from './SuburbRadius';
 import {
-  calculateSuburbCentroid,
+  calculateSuburbPoint,
+  type SuburbPoint,
   type SuburbSelection,
-} from '../lib/suburbCentroid';
+} from '../lib/suburbPoint';
 import {
   getKnownDemographics,
   type ConnectSummary,
@@ -34,7 +35,7 @@ function getSuburbStyle(feature?: Feature): PathOptions {
 function bindSuburbDetails(
   feature: Feature,
   layer: Layer,
-  selectSuburb: (feature: Feature) => boolean,
+  selectSuburb: (feature: Feature) => SuburbPoint | null,
 ) {
   const name = document.createElement('strong');
   name.textContent = String(feature.properties?.suburbname ?? 'Unnamed suburb');
@@ -85,7 +86,10 @@ function bindSuburbDetails(
     maxHeight: 260,
     autoPan: false,
   });
-  layer.on('click', () => selectSuburb(feature));
+  layer.on('click', () => {
+    const point = selectSuburb(feature);
+    if (point) layer.getPopup()?.setLatLng([point.latitude, point.longitude]);
+  });
 }
 
 export default function SuburbLayer() {
@@ -93,11 +97,14 @@ export default function SuburbLayer() {
   const [state, setState] = useState<LoadState>({ status: 'loading' });
   const [selection, setSelection] = useState<SuburbSelection | null>(null);
 
-  function selectSuburb(feature: Feature, fitCircle = false): boolean {
-    const centroid = calculateSuburbCentroid(feature);
-    if (!centroid) return false;
-    setSelection({ feature, centroid, fitCircle });
-    return true;
+  function selectSuburb(
+    feature: Feature,
+    fitCircle = false,
+  ): SuburbPoint | null {
+    const point = calculateSuburbPoint(feature);
+    if (!point) return null;
+    setSelection({ feature, point, fitCircle });
+    return point;
   }
 
   function clearSelection() {
@@ -158,7 +165,7 @@ export default function SuburbLayer() {
           <SuburbSearch
             collection={state.collection}
             selection={selection}
-            onSelect={(feature) => selectSuburb(feature, true)}
+            onSelect={(feature) => selectSuburb(feature, true) !== null}
             onClear={clearSelection}
           />
         </>
